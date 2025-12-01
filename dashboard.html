@@ -87,11 +87,131 @@
             color: #666;
             margin-top: 10px;
         }
+
+        /* ガントチャートスタイル */
+        .gantt-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        .gantt-header {
+            margin-bottom: 10px;
+        }
+        .gantt-timeline-header {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .month-header {
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border-right: 1px solid #ddd;
+            background: #f5f5f5;
+        }
+        .gantt-body {
+            position: relative;
+            overflow-x: auto;
+        }
+        .gantt-chart {
+            position: relative;
+            min-height: 400px;
+        }
+        .gantt-row {
+            position: relative;
+            border-bottom: 1px solid #eee;
+            display: flex;
+        }
+        .task-label {
+            position: absolute;
+            left: -300px;
+            width: 280px;
+            padding: 10px;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: white;
+            z-index: 10;
+        }
+        .task-status {
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        .task-assignee {
+            font-size: 10px;
+            color: #999;
+            margin-left: 5px;
+        }
+        .task-bar-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .task-bar {
+            position: absolute;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            margin-top: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .task-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .task-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px 0 0 4px;
+        }
+        .task-bar-text {
+            position: relative;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+        .gantt-dependencies {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .gantt-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <h1>📊 新オフィスビル建設プロジェクト</h1>
-    <p>生成日時: 2025/12/1 12:38:11</p>
+    <p>生成日時: 2025/12/1 12:48:08</p>
 
     <div class="stats-grid">
         <div class="stat-box">
@@ -164,6 +284,606 @@
                 <p>ステータス: 未着手</p>
             </div>
         
+    </div>
+
+    <div class="card">
+        <h2>📅 ガントチャート</h2>
+        <div style="margin-left: 300px; overflow-x: auto;">
+            
+      <div class="gantt-container">
+        <div class="gantt-header">
+          <div class="gantt-timeline-header">
+            <div class="month-header" style="width: 510px;">2025/01</div><div class="month-header" style="width: 840px;">2025/02</div><div class="month-header" style="width: 930px;">2025/03</div><div class="month-header" style="width: 900px;">2025/04</div><div class="month-header" style="width: 930px;">2025/05</div><div class="month-header" style="width: 900px;">2025/06</div><div class="month-header" style="width: 420px;">2025/07</div>
+          </div>
+        </div>
+        <div class="gantt-body">
+          <div class="gantt-chart" style="width: 5430px;">
+            
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            顧客ヒアリング
+            <span class="task-assignee">山田太郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 450px; top: 0px; background-color: #3498db;"
+                 data-task-id="demo-001-sales-1"
+                 title="顧客ヒアリング
+開始: N/A
+期限: 2025/1/30
+進捗: 100%">
+              <div class="task-progress" style="width: 450px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            見積書作成
+            <span class="task-assignee">山田太郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 450px; top: 40px; background-color: #3498db;"
+                 data-task-id="demo-001-sales-2"
+                 title="見積書作成
+開始: N/A
+期限: 2025/1/30
+進捗: 100%">
+              <div class="task-progress" style="width: 450px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            プレゼンテーション
+            <span class="task-assignee">山田太郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 450px; top: 80px; background-color: #3498db;"
+                 data-task-id="demo-001-sales-3"
+                 title="プレゼンテーション
+開始: N/A
+期限: 2025/1/30
+進捗: 100%">
+              <div class="task-progress" style="width: 450px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            契約締結
+            <span class="task-assignee">山田太郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 450px; top: 120px; background-color: #3498db;"
+                 data-task-id="demo-001-sales-4"
+                 title="契約締結
+開始: N/A
+期限: 2025/1/30
+進捗: 100%">
+              <div class="task-progress" style="width: 450px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            キックオフミーティング
+            <span class="task-assignee">山田太郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 450px; top: 160px; background-color: #3498db;"
+                 data-task-id="demo-001-sales-5"
+                 title="キックオフミーティング
+開始: N/A
+期限: 2025/1/30
+進捗: 100%">
+              <div class="task-progress" style="width: 450px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            基本設計
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 1800px; top: 200px; background-color: #9b59b6;"
+                 data-task-id="demo-001-design-1"
+                 title="基本設計
+開始: N/A
+期限: 2025/3/16
+進捗: 100%">
+              <div class="task-progress" style="width: 1800px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            詳細設計
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 1800px; top: 240px; background-color: #9b59b6;"
+                 data-task-id="demo-001-design-2"
+                 title="詳細設計
+開始: N/A
+期限: 2025/3/16
+進捗: 100%">
+              <div class="task-progress" style="width: 1800px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">✓</span>
+            図面作成
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 1800px; top: 280px; background-color: #9b59b6;"
+                 data-task-id="demo-001-design-3"
+                 title="図面作成
+開始: N/A
+期限: 2025/3/16
+進捗: 100%">
+              <div class="task-progress" style="width: 1800px;"></div>
+              <span class="task-bar-text">100%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status">▶</span>
+            設計レビュー
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 1800px; top: 320px; background-color: #9b59b6;"
+                 data-task-id="demo-001-design-4"
+                 title="設計レビュー
+開始: N/A
+期限: 2025/3/16
+進捗: 50%">
+              <div class="task-progress" style="width: 900px;"></div>
+              <span class="task-bar-text">50%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            設計承認
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 1800px; top: 360px; background-color: #9b59b6;"
+                 data-task-id="demo-001-design-5"
+                 title="設計承認
+開始: N/A
+期限: 2025/3/16
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            材料調達
+            <span class="task-assignee">鈴木一郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 3600px; top: 400px; background-color: #e74c3c;"
+                 data-task-id="demo-001-manufacturing-1"
+                 title="材料調達
+開始: N/A
+期限: 2025/5/15
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            製造計画
+            <span class="task-assignee">鈴木一郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 3600px; top: 440px; background-color: #e74c3c;"
+                 data-task-id="demo-001-manufacturing-2"
+                 title="製造計画
+開始: N/A
+期限: 2025/5/15
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            製造実行
+            <span class="task-assignee">鈴木一郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 3600px; top: 480px; background-color: #e74c3c;"
+                 data-task-id="demo-001-manufacturing-3"
+                 title="製造実行
+開始: N/A
+期限: 2025/5/15
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            品質検査
+            <span class="task-assignee">鈴木一郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 3600px; top: 520px; background-color: #e74c3c;"
+                 data-task-id="demo-001-manufacturing-4"
+                 title="品質検査
+開始: N/A
+期限: 2025/5/15
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            梱包・出荷準備
+            <span class="task-assignee">鈴木一郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 3600px; top: 560px; background-color: #e74c3c;"
+                 data-task-id="demo-001-manufacturing-5"
+                 title="梱包・出荷準備
+開始: N/A
+期限: 2025/5/15
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            現場準備
+            <span class="task-assignee">田中次郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 5400px; top: 600px; background-color: #f39c12;"
+                 data-task-id="demo-001-construction-1"
+                 title="現場準備
+開始: N/A
+期限: 2025/7/14
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            施工実行
+            <span class="task-assignee">田中次郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 5400px; top: 640px; background-color: #f39c12;"
+                 data-task-id="demo-001-construction-2"
+                 title="施工実行
+開始: N/A
+期限: 2025/7/14
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            中間検査
+            <span class="task-assignee">山田太郎</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 5400px; top: 680px; background-color: #f39c12;"
+                 data-task-id="demo-001-construction-3"
+                 title="中間検査
+開始: N/A
+期限: 2025/7/14
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            最終検査
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 5400px; top: 720px; background-color: #f39c12;"
+                 data-task-id="demo-001-construction-4"
+                 title="最終検査
+開始: N/A
+期限: 2025/7/14
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            引き渡し
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 5400px; top: 760px; background-color: #f39c12;"
+                 data-task-id="demo-001-construction-5"
+                 title="引き渡し
+開始: N/A
+期限: 2025/7/14
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+        <div class="gantt-row" style="height: 40px;">
+          <div class="task-label">
+            <span class="task-status"></span>
+            アフターフォロー
+            <span class="task-assignee">佐藤花子</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: 0px; width: 5400px; top: 800px; background-color: #f39c12;"
+                 data-task-id="demo-001-construction-6"
+                 title="アフターフォロー
+開始: N/A
+期限: 2025/7/14
+進捗: 0%">
+              <div class="task-progress" style="width: 0px;"></div>
+              <span class="task-bar-text">0%</span>
+            </div>
+          </div>
+        </div>
+      
+            <svg class="gantt-dependencies" width="5430" height="840">
+              
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#666" />
+        </marker>
+      </defs>
+      
+          <line x1="450" y1="20" x2="0" y2="60"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="60" x2="0" y2="100"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="100" x2="0" y2="140"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="140" x2="0" y2="180"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="180" x2="0" y2="220"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="220" x2="0" y2="260"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="180" x2="0" y2="260"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="260" x2="0" y2="300"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="180" x2="0" y2="300"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="300" x2="0" y2="340"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="180" x2="0" y2="340"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="340" x2="0" y2="380"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="450" y1="180" x2="0" y2="380"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="380" x2="0" y2="420"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="420" x2="0" y2="460"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="380" x2="0" y2="460"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="460" x2="0" y2="500"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="380" x2="0" y2="500"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="500" x2="0" y2="540"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="380" x2="0" y2="540"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="540" x2="0" y2="580"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="1800" y1="380" x2="0" y2="580"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="580" x2="0" y2="620"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="5400" y1="620" x2="0" y2="660"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="580" x2="0" y2="660"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="5400" y1="660" x2="0" y2="700"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="580" x2="0" y2="700"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="5400" y1="700" x2="0" y2="740"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="580" x2="0" y2="740"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="5400" y1="740" x2="0" y2="780"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="580" x2="0" y2="780"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="5400" y1="780" x2="0" y2="820"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+          <line x1="3600" y1="580" x2="0" y2="820"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        
+    
+            </svg>
+          </div>
+        </div>
+        <div class="gantt-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background: #3498db"></span>
+            営業
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #9b59b6"></span>
+            設計
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #e74c3c"></span>
+            製造
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #f39c12"></span>
+            施工
+          </div>
+        </div>
+      </div>
+    
+        </div>
     </div>
 
     

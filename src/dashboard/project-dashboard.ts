@@ -274,6 +274,217 @@ export class ProjectDashboard {
   }
 
   /**
+   * ガントチャート用のタイムライン計算
+   */
+  private calculateGanttTimeline(project: Project): {
+    startDate: Date;
+    endDate: Date;
+    totalDays: number;
+    tasks: Array<{
+      task: Task;
+      startOffset: number;
+      duration: number;
+      dependencies: string[];
+    }>;
+  } {
+    // プロジェクト全体の開始日と終了日を計算
+    let minDate = project.startDate;
+    let maxDate = project.targetEndDate;
+
+    project.tasks.forEach(task => {
+      if (task.startDate && task.startDate < minDate) {
+        minDate = task.startDate;
+      }
+      if (task.dueDate && task.dueDate > maxDate) {
+        maxDate = task.dueDate;
+      }
+    });
+
+    const totalDays = Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    const taskData = project.tasks.map(task => {
+      const taskStart = task.startDate || project.startDate;
+      const taskEnd = task.dueDate || new Date(taskStart.getTime() + 7 * 24 * 60 * 60 * 1000); // デフォルト7日
+
+      const startOffset = Math.ceil((taskStart.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24));
+      const duration = Math.ceil((taskEnd.getTime() - taskStart.getTime()) / (1000 * 60 * 60 * 24));
+
+      return {
+        task,
+        startOffset: Math.max(0, startOffset),
+        duration: Math.max(1, duration),
+        dependencies: task.dependencies || [],
+      };
+    });
+
+    return {
+      startDate: minDate,
+      endDate: maxDate,
+      totalDays,
+      tasks: taskData,
+    };
+  }
+
+  /**
+   * フェーズの色を取得
+   */
+  private getPhaseColor(phase: ProjectPhase): string {
+    const colors: Record<ProjectPhase, string> = {
+      [ProjectPhase.SALES]: '#3498db',
+      [ProjectPhase.DESIGN]: '#9b59b6',
+      [ProjectPhase.MANUFACTURING]: '#e74c3c',
+      [ProjectPhase.CONSTRUCTION]: '#f39c12',
+    };
+    return colors[phase];
+  }
+
+  /**
+   * ガントチャートHTMLを生成
+   */
+  generateGanttChart(project: Project): string {
+    const timeline = this.calculateGanttTimeline(project);
+    const dayWidth = 30; // 1日あたりのピクセル幅
+    const rowHeight = 40; // 1タスクあたりの高さ
+    const chartWidth = timeline.totalDays * dayWidth;
+
+    // 月ごとのヘッダーを生成
+    const monthHeaders: string[] = [];
+    let currentDate = new Date(timeline.startDate);
+    let currentMonth = currentDate.getMonth();
+    let monthStartDay = 0;
+
+    for (let day = 0; day <= timeline.totalDays; day++) {
+      const checkDate = new Date(timeline.startDate.getTime() + day * 24 * 60 * 60 * 1000);
+      if (checkDate.getMonth() !== currentMonth) {
+        const monthWidth = (day - monthStartDay) * dayWidth;
+        const monthName = `${currentDate.getFullYear()}/${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+        monthHeaders.push(`<div class="month-header" style="width: ${monthWidth}px;">${monthName}</div>`);
+
+        currentMonth = checkDate.getMonth();
+        currentDate = checkDate;
+        monthStartDay = day;
+      }
+    }
+
+    // 最後の月を追加
+    const lastMonthWidth = (timeline.totalDays - monthStartDay) * dayWidth;
+    const lastMonthName = `${currentDate.getFullYear()}/${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+    monthHeaders.push(`<div class="month-header" style="width: ${lastMonthWidth}px;">${lastMonthName}</div>`);
+
+    // タスクバーを生成
+    const taskBars = timeline.tasks.map((item, index) => {
+      const barLeft = item.startOffset * dayWidth;
+      const barWidth = item.duration * dayWidth;
+      const barTop = index * rowHeight;
+      const color = this.getPhaseColor(item.task.phase);
+      const progressWidth = (barWidth * item.task.progress) / 100;
+
+      const statusIcon = item.task.status === TaskStatus.COMPLETED ? '✓' :
+                         item.task.status === TaskStatus.IN_PROGRESS ? '▶' :
+                         item.task.status === TaskStatus.BLOCKED ? '⚠' : '';
+
+      return `
+        <div class="gantt-row" style="height: ${rowHeight}px;">
+          <div class="task-label">
+            <span class="task-status">${statusIcon}</span>
+            ${item.task.title}
+            <span class="task-assignee">${item.task.assignee || '未割当'}</span>
+          </div>
+          <div class="task-bar-container">
+            <div class="task-bar"
+                 style="left: ${barLeft}px; width: ${barWidth}px; top: ${barTop}px; background-color: ${color};"
+                 data-task-id="${item.task.id}"
+                 title="${item.task.title}\n開始: ${item.task.startDate?.toLocaleDateString('ja-JP') || 'N/A'}\n期限: ${item.task.dueDate?.toLocaleDateString('ja-JP') || 'N/A'}\n進捗: ${item.task.progress}%">
+              <div class="task-progress" style="width: ${progressWidth}px;"></div>
+              <span class="task-bar-text">${item.task.progress}%</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="gantt-container">
+        <div class="gantt-header">
+          <div class="gantt-timeline-header">
+            ${monthHeaders.join('')}
+          </div>
+        </div>
+        <div class="gantt-body">
+          <div class="gantt-chart" style="width: ${chartWidth}px;">
+            ${taskBars}
+            <svg class="gantt-dependencies" width="${chartWidth}" height="${timeline.tasks.length * rowHeight}">
+              ${this.generateDependencyLines(timeline, dayWidth, rowHeight)}
+            </svg>
+          </div>
+        </div>
+        <div class="gantt-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background: ${this.getPhaseColor(ProjectPhase.SALES)}"></span>
+            ${PhaseManager.getPhaseNameJa(ProjectPhase.SALES)}
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: ${this.getPhaseColor(ProjectPhase.DESIGN)}"></span>
+            ${PhaseManager.getPhaseNameJa(ProjectPhase.DESIGN)}
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: ${this.getPhaseColor(ProjectPhase.MANUFACTURING)}"></span>
+            ${PhaseManager.getPhaseNameJa(ProjectPhase.MANUFACTURING)}
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: ${this.getPhaseColor(ProjectPhase.CONSTRUCTION)}"></span>
+            ${PhaseManager.getPhaseNameJa(ProjectPhase.CONSTRUCTION)}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * 依存関係の矢印を生成
+   */
+  private generateDependencyLines(
+    timeline: ReturnType<typeof this.calculateGanttTimeline>,
+    dayWidth: number,
+    rowHeight: number
+  ): string {
+    const lines: string[] = [];
+
+    timeline.tasks.forEach((item, index) => {
+      item.dependencies.forEach(depId => {
+        const depIndex = timeline.tasks.findIndex(t => t.task.id === depId);
+        if (depIndex === -1) return;
+
+        const depTask = timeline.tasks[depIndex];
+
+        // 依存元タスクの終了位置
+        const x1 = (depTask.startOffset + depTask.duration) * dayWidth;
+        const y1 = depIndex * rowHeight + rowHeight / 2;
+
+        // 依存先タスクの開始位置
+        const x2 = item.startOffset * dayWidth;
+        const y2 = index * rowHeight + rowHeight / 2;
+
+        // 矢印のパス
+        lines.push(`
+          <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+                stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"
+                stroke-dasharray="5,5" opacity="0.6"/>
+        `);
+      });
+    });
+
+    return `
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#666" />
+        </marker>
+      </defs>
+      ${lines.join('')}
+    `;
+  }
+
+  /**
    * HTML形式でダッシュボードを生成
    */
   generateHtmlDashboard(stats: DashboardStats, project: Project): string {
@@ -367,6 +578,126 @@ export class ProjectDashboard {
             color: #666;
             margin-top: 10px;
         }
+
+        /* ガントチャートスタイル */
+        .gantt-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        .gantt-header {
+            margin-bottom: 10px;
+        }
+        .gantt-timeline-header {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .month-header {
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border-right: 1px solid #ddd;
+            background: #f5f5f5;
+        }
+        .gantt-body {
+            position: relative;
+            overflow-x: auto;
+        }
+        .gantt-chart {
+            position: relative;
+            min-height: 400px;
+        }
+        .gantt-row {
+            position: relative;
+            border-bottom: 1px solid #eee;
+            display: flex;
+        }
+        .task-label {
+            position: absolute;
+            left: -300px;
+            width: 280px;
+            padding: 10px;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: white;
+            z-index: 10;
+        }
+        .task-status {
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        .task-assignee {
+            font-size: 10px;
+            color: #999;
+            margin-left: 5px;
+        }
+        .task-bar-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .task-bar {
+            position: absolute;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            margin-top: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .task-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .task-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px 0 0 4px;
+        }
+        .task-bar-text {
+            position: relative;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+        .gantt-dependencies {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .gantt-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -418,6 +749,13 @@ export class ProjectDashboard {
         `
           )
           .join('')}
+    </div>
+
+    <div class="card">
+        <h2>📅 ガントチャート</h2>
+        <div style="margin-left: 300px; overflow-x: auto;">
+            ${this.generateGanttChart(project)}
+        </div>
     </div>
 
     ${
