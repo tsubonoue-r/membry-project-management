@@ -4,6 +4,7 @@ import {
   PhaseInfo,
   Task,
   TaskStatus,
+  TaskPriority,
   WorkflowConfig,
 } from '../types/index.js';
 
@@ -79,7 +80,7 @@ export class PhaseManager {
           description: template.description,
           phase,
           status: TaskStatus.NOT_STARTED,
-          priority: 'medium',
+          priority: TaskPriority.MEDIUM,
           dependencies: [],
           subtasks: [],
           progress: 0,

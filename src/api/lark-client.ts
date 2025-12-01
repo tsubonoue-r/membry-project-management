@@ -1,4 +1,4 @@
-import * as lark from '@larksuite/node-sdk';
+import * as lark from '@larksuiteoapi/node-sdk';
 import { Task, LarkNotificationConfig } from '../types/index.js';
 
 /**
