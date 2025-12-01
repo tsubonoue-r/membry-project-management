@@ -1,0 +1,172 @@
+// Prisma Schema for Membry Project Management (SQLite Compatible)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーモデル
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          String    @default("MEMBER") // ADMIN, MANAGER, MEMBER, VIEWER
+  larkUserId    String?   @unique
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // リレーション
+  ownedProjects Project[]     @relation("ProjectOwner")
+  tasks         Task[]        @relation("TaskAssignee")
+  comments      Comment[]
+  attachments   Attachment[]
+
+  @@map("users")
+}
+
+// プロジェクトモデル
+model Project {
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  status          String   @default("ACTIVE") // ACTIVE, COMPLETED, ON_HOLD, CANCELLED
+  startDate       DateTime
+  targetEndDate   DateTime
+  actualEndDate   DateTime?
+
+  ownerId         String
+  owner           User     @relation("ProjectOwner", fields: [ownerId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // リレーション
+  tasks           Task[]
+  phases          ProjectPhase[]
+  attachments     Attachment[]
+
+  @@map("projects")
+}
+
+// プロジェクトフェーズモデル
+model ProjectPhase {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  phase       String   // SALES, DESIGN, MANUFACTURING, CONSTRUCTION
+  name        String
+  status      String   @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, BLOCKED, COMPLETED, CANCELLED
+  progress    Int      @default(0)
+  startDate   DateTime?
+  endDate     DateTime?
+  responsible String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, phase])
+  @@map("project_phases")
+}
+
+// タスクモデル
+model Task {
+  id              String     @id @default(uuid())
+  projectId       String
+  project         Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String?
+  phase           String     // SALES, DESIGN, MANUFACTURING, CONSTRUCTION
+  status          String     @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, BLOCKED, COMPLETED, CANCELLED
+  priority        String     @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  progress        Int        @default(0)
+
+  assigneeId      String?
+  assignee        User?      @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  dueDate         DateTime?
+  completedDate   DateTime?
+  estimatedHours  Float?
+  actualHours     Float?
+
+  parentTaskId    String?
+  parentTask      Task?      @relation("SubTasks", fields: [parentTaskId], references: [id])
+  subtasks        Task[]     @relation("SubTasks")
+
+  dependencies    String?    // JSON string of task IDs
+  tags            String?    // JSON string
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // リレーション
+  comments        Comment[]
+  attachments     Attachment[]
+
+  @@map("tasks")
+}
+
+// コメントモデル
+model Comment {
+  id          String   @id @default(uuid())
+  content     String
+
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("comments")
+}
+
+// 添付ファイルモデル
+model Attachment {
+  id          String   @id @default(uuid())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int
+  path        String
+
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  taskId      String?
+  task        Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User    @relation(fields: [uploadedById], references: [id])
+
+  createdAt   DateTime @default(now())
+
+  @@map("attachments")
+}
+
+// メンバー（Lark同期用）
+model Member {
+  id            String   @id @default(uuid())
+  larkUserId    String   @unique
+  name          String
+  email         String?
+  title         String?
+  department    String?
+  skills        String?  // JSON string
+  availability  Float    @default(40)
+  currentLoad   Float    @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("members")
+}
