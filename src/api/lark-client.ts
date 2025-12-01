@@ -228,4 +228,134 @@ export class LarkClient {
       throw error;
     }
   }
+
+  /**
+   * 部署のメンバーリストを取得
+   */
+  async getDepartmentMembers(departmentId: string): Promise<Array<{
+    userId: string;
+    name: string;
+    email: string;
+    department?: string;
+    title?: string;
+    avatarUrl?: string;
+  }>> {
+    try {
+      const response = await this.client.contact.v3.user.list({
+        params: {
+          department_id: departmentId,
+          page_size: 50,
+        },
+      });
+
+      if (response.code === 0 && response.data?.items) {
+        return response.data.items.map(user => ({
+          userId: user.user_id || '',
+          name: user.name || '',
+          email: user.email || '',
+          department: user.department_ids?.[0],
+          title: user.job_title || '',
+          avatarUrl: user.avatar?.avatar_origin || '',
+        }));
+      }
+
+      throw new Error(`Failed to get department members: ${response.msg}`);
+    } catch (error) {
+      console.error('Error getting department members:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 全メンバーリストを取得
+   */
+  async getAllMembers(): Promise<Array<{
+    userId: string;
+    name: string;
+    email: string;
+    department?: string;
+    title?: string;
+    avatarUrl?: string;
+  }>> {
+    try {
+      const allMembers: Array<{
+        userId: string;
+        name: string;
+        email: string;
+        department?: string;
+        title?: string;
+        avatarUrl?: string;
+      }> = [];
+
+      let pageToken: string | undefined = undefined;
+
+      // ページネーションで全ユーザーを取得
+      do {
+        const response = await this.client.contact.v3.user.list({
+          params: {
+            page_size: 50,
+            page_token: pageToken,
+          },
+        });
+
+        if (response.code === 0 && response.data?.items) {
+          const members = response.data.items.map(user => ({
+            userId: user.user_id || '',
+            name: user.name || '',
+            email: user.email || '',
+            department: user.department_ids?.[0],
+            title: user.job_title || '',
+            avatarUrl: user.avatar?.avatar_origin || '',
+          }));
+
+          allMembers.push(...members);
+          pageToken = response.data.page_token;
+        } else {
+          break;
+        }
+      } while (pageToken);
+
+      return allMembers;
+    } catch (error) {
+      console.error('Error getting all members:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * ユーザーIDから詳細情報を取得
+   */
+  async getMemberDetails(userId: string): Promise<{
+    userId: string;
+    name: string;
+    email: string;
+    department?: string;
+    title?: string;
+    avatarUrl?: string;
+    mobile?: string;
+  }> {
+    try {
+      const response = await this.client.contact.v3.user.get({
+        path: { user_id: userId },
+      });
+
+      if (response.code === 0 && response.data?.user) {
+        const user = response.data.user;
+        return {
+          userId: user.user_id || '',
+          name: user.name || '',
+          email: user.email || '',
+          department: user.department_ids?.[0],
+          title: user.job_title || '',
+          avatarUrl: user.avatar?.avatar_origin || '',
+          mobile: user.mobile || '',
+        };
+      }
+
+      throw new Error(`Failed to get member details: ${response.msg}`);
+    } catch (error) {
+      console.error('Error getting member details:', error);
+      throw error;
+    }
+  }
 }

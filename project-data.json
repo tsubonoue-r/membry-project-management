@@ -1,7 +1,7 @@
 {
   "projectName": "新オフィスビル建設プロジェクト",
   "projectId": "demo-001",
-  "generatedAt": "2025-12-01T03:22:10.331Z",
+  "generatedAt": "2025-12-01T03:38:11.746Z",
   "stats": {
     "projectId": "demo-001",
     "totalTasks": 21,
@@ -19,15 +19,27 @@
     "criticalTasks": [],
     "resourceUtilization": {
       "山田太郎": {
-        "totalTasks": 5,
+        "totalTasks": 6,
         "completedTasks": 5,
-        "estimatedHours": 24,
+        "estimatedHours": 32,
         "actualHours": 0
       },
       "佐藤花子": {
-        "totalTasks": 5,
+        "totalTasks": 8,
         "completedTasks": 3,
-        "estimatedHours": 192,
+        "estimatedHours": 212,
+        "actualHours": 0
+      },
+      "鈴木一郎": {
+        "totalTasks": 5,
+        "completedTasks": 0,
+        "estimatedHours": 208,
+        "actualHours": 0
+      },
+      "田中次郎": {
+        "totalTasks": 2,
+        "completedTasks": 0,
+        "estimatedHours": 216,
         "actualHours": 0
       }
     }

@@ -3,10 +3,11 @@
  * システムの動作確認用サンプル
  */
 
-import { Project, ProjectPhase, TaskStatus, TaskPriority } from '../types/index.js';
+import { Project, ProjectPhase, TaskStatus, TaskPriority, Member, MemberSkill } from '../types/index.js';
 import { PhaseManager } from '../workflows/phase-manager.js';
 import { TaskDecomposer } from '../services/task-decomposer.js';
 import { ProjectDashboard } from '../dashboard/project-dashboard.js';
+import { MemberManager } from '../services/member-manager.js';
 import * as fs from 'fs';
 
 // デモプロジェクトの作成
@@ -61,6 +62,77 @@ function createDemoProject(): Project {
   return project;
 }
 
+// デモメンバーの作成
+function createDemoMembers(): Member[] {
+  return [
+    {
+      id: 'member-001',
+      name: '山田太郎',
+      email: 'yamada@example.com',
+      department: '営業部',
+      title: '営業マネージャー',
+      skills: [MemberSkill.SALES, MemberSkill.PROJECT_MANAGEMENT],
+      availability: 40,
+      currentLoad: 0,
+      assignedTasks: [],
+      larkUserId: 'lark-001',
+      avatarUrl: 'https://example.com/avatar1.jpg',
+    },
+    {
+      id: 'member-002',
+      name: '佐藤花子',
+      email: 'sato@example.com',
+      department: '設計部',
+      title: '設計エンジニア',
+      skills: [MemberSkill.DESIGN, MemberSkill.QUALITY_ASSURANCE],
+      availability: 40,
+      currentLoad: 0,
+      assignedTasks: [],
+      larkUserId: 'lark-002',
+      avatarUrl: 'https://example.com/avatar2.jpg',
+    },
+    {
+      id: 'member-003',
+      name: '鈴木一郎',
+      email: 'suzuki@example.com',
+      department: '製造部',
+      title: '製造エンジニア',
+      skills: [MemberSkill.MANUFACTURING, MemberSkill.QUALITY_ASSURANCE],
+      availability: 40,
+      currentLoad: 0,
+      assignedTasks: [],
+      larkUserId: 'lark-003',
+      avatarUrl: 'https://example.com/avatar3.jpg',
+    },
+    {
+      id: 'member-004',
+      name: '田中次郎',
+      email: 'tanaka@example.com',
+      department: '施工部',
+      title: '施工マネージャー',
+      skills: [MemberSkill.CONSTRUCTION, MemberSkill.PROJECT_MANAGEMENT],
+      availability: 40,
+      currentLoad: 0,
+      assignedTasks: [],
+      larkUserId: 'lark-004',
+      avatarUrl: 'https://example.com/avatar4.jpg',
+    },
+    {
+      id: 'member-005',
+      name: '高橋美咲',
+      email: 'takahashi@example.com',
+      department: '品質保証部',
+      title: 'QAスペシャリスト',
+      skills: [MemberSkill.QUALITY_ASSURANCE, MemberSkill.PROJECT_MANAGEMENT],
+      availability: 40,
+      currentLoad: 0,
+      assignedTasks: [],
+      larkUserId: 'lark-005',
+      avatarUrl: 'https://example.com/avatar5.jpg',
+    },
+  ];
+}
+
 // メイン実行
 async function main() {
   console.log('🏗️  デモプロジェクト管理システム起動\n');
@@ -91,6 +163,67 @@ async function main() {
 
   const totalSubtasks = project.tasks.reduce((sum, task) => sum + task.subtasks.length, 0);
   console.log(`✅ ${totalSubtasks}個のサブタスクを生成しました\n`);
+
+  // メンバー管理の初期化
+  console.log('👥 メンバー管理システムを初期化中...');
+  const memberManager = new MemberManager();
+
+  // デモメンバーを追加
+  const demoMembers = createDemoMembers();
+  demoMembers.forEach(member => memberManager.addMember(member));
+  console.log(`✅ ${demoMembers.length}人のメンバーを登録しました\n`);
+
+  // メンバー一覧を表示
+  console.log('📋 登録メンバー:');
+  memberManager.getAllMembers().forEach(member => {
+    const skillNames = member.skills.map(s => {
+      const skillMap: Record<MemberSkill, string> = {
+        [MemberSkill.SALES]: '営業',
+        [MemberSkill.DESIGN]: '設計',
+        [MemberSkill.MANUFACTURING]: '製造',
+        [MemberSkill.CONSTRUCTION]: '施工',
+        [MemberSkill.PROJECT_MANAGEMENT]: 'PM',
+        [MemberSkill.QUALITY_ASSURANCE]: '品質保証',
+      };
+      return skillMap[s];
+    }).join(', ');
+    console.log(`  - ${member.name} (${member.department}) - スキル: ${skillNames}`);
+  });
+  console.log('');
+
+  // 未割り当てタスクに対する推奨メンバーを表示（最初の3タスクのみ）
+  console.log('🎯 タスク割り当て推奨（サンプル）:');
+  const unassignedTasks = project.tasks.filter(t => !t.assignee).slice(0, 3);
+  unassignedTasks.forEach(task => {
+    const recommendations = memberManager.recommendMembersForTask(task, 3);
+    console.log(`\n  タスク: ${task.title} (${PhaseManager.getPhaseNameJa(task.phase)})`);
+    recommendations.forEach((rec, index) => {
+      console.log(`    ${index + 1}. ${rec.member.name} - スコア: ${rec.score}/100`);
+      console.log(`       理由: ${rec.reason}`);
+      console.log(`       完了予想: ${rec.estimatedCompletion.toLocaleDateString('ja-JP')}`);
+    });
+  });
+  console.log('');
+
+  // 自動負荷分散を実行
+  console.log('⚖️  タスクの自動負荷分散を実行中...');
+  const assignments = memberManager.balanceLoad(project.tasks);
+  console.log(`✅ ${assignments.size}人のメンバーにタスクを割り当てました\n`);
+
+  // 各メンバーの負荷状況を表示
+  console.log('📊 メンバー負荷状況:');
+  memberManager.getAllMembers().forEach(member => {
+    const utilizationRate = member.availability > 0
+      ? Math.round((member.currentLoad / member.availability) * 100)
+      : 0;
+    const filledBars = Math.min(20, Math.floor(utilizationRate / 5));
+    const emptyBars = Math.max(0, 20 - filledBars);
+    const loadBar = '█'.repeat(filledBars) + '░'.repeat(emptyBars);
+    const warningIcon = utilizationRate >= 100 ? ' ⚠️ ' : '';
+    console.log(`  ${member.name}: [${loadBar}] ${utilizationRate}%${warningIcon} (${member.currentLoad}h/${member.availability}h)`);
+    console.log(`    割当タスク数: ${member.assignedTasks.length}`);
+  });
+  console.log('');
 
   // 進捗をシミュレート（営業フェーズは完了、設計フェーズは進行中）
   project.tasks.forEach(task => {

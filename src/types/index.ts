@@ -135,3 +135,53 @@ export interface WorkflowConfig {
     [key in ProjectPhase]?: string[]; // フェーズごとの承認者
   };
 }
+
+/**
+ * メンバースキル
+ */
+export enum MemberSkill {
+  SALES = 'sales',               // 営業
+  DESIGN = 'design',             // 設計
+  MANUFACTURING = 'manufacturing', // 製造
+  CONSTRUCTION = 'construction',   // 施工
+  PROJECT_MANAGEMENT = 'project_management', // プロジェクト管理
+  QUALITY_ASSURANCE = 'quality_assurance',   // 品質保証
+}
+
+/**
+ * メンバー情報
+ */
+export interface Member {
+  id: string;                    // Lark User ID
+  name: string;                  // 名前
+  email: string;                 // メールアドレス
+  department?: string;           // 部署
+  title?: string;                // 役職
+  skills: MemberSkill[];         // スキルセット
+  availability: number;          // 稼働可能時間（週あたりの時間）
+  currentLoad: number;           // 現在の負荷（時間）
+  assignedTasks: string[];       // アサインされているタスクID
+  larkUserId: string;            // Lark User ID
+  larkOpenId?: string;           // Lark Open ID
+  avatarUrl?: string;            // アバター画像URL
+}
+
+/**
+ * チーム情報
+ */
+export interface Team {
+  id: string;
+  name: string;
+  members: Member[];
+  larkDepartmentId?: string;     // Lark部署ID
+}
+
+/**
+ * タスク割り当て推奨情報
+ */
+export interface TaskAssignmentRecommendation {
+  member: Member;
+  score: number;                 // 適性スコア（0-100）
+  reason: string;                // 推奨理由
+  estimatedCompletion: Date;     // 完了予想日
+}
