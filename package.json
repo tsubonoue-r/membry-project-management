@@ -1,0 +1,36 @@
+{
+  "name": "membry-project-management",
+  "version": "1.0.0",
+  "description": "Larkベースの営業・設計・製造・施工プロジェクト管理システム",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "agents:parallel:exec": "echo 'Agent execution placeholder'"
+  },
+  "keywords": [
+    "project-management",
+    "lark",
+    "workflow",
+    "task-management",
+    "construction"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@larksuite/node-sdk": "^1.28.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  }
+}
