@@ -1,0 +1,60 @@
+{
+  "projectName": "新オフィスビル建設プロジェクト",
+  "projectId": "demo-001",
+  "generatedAt": "2025-12-01T03:22:10.331Z",
+  "stats": {
+    "projectId": "demo-001",
+    "totalTasks": 21,
+    "completedTasks": 8,
+    "inProgressTasks": 1,
+    "blockedTasks": 0,
+    "overallProgress": 43,
+    "phaseProgress": {
+      "sales": 100,
+      "design": 70,
+      "manufacturing": 0,
+      "construction": 0
+    },
+    "upcomingDeadlines": [],
+    "criticalTasks": [],
+    "resourceUtilization": {
+      "山田太郎": {
+        "totalTasks": 5,
+        "completedTasks": 5,
+        "estimatedHours": 24,
+        "actualHours": 0
+      },
+      "佐藤花子": {
+        "totalTasks": 5,
+        "completedTasks": 3,
+        "estimatedHours": 192,
+        "actualHours": 0
+      }
+    }
+  },
+  "phases": {
+    "sales": {
+      "name": "営業",
+      "status": "完了",
+      "progress": 100,
+      "startDate": "2025-01-15T00:00:00.000Z",
+      "endDate": "2025-02-01T00:00:00.000Z"
+    },
+    "design": {
+      "name": "設計",
+      "status": "進行中",
+      "progress": 70,
+      "startDate": "2025-02-01T00:00:00.000Z"
+    },
+    "manufacturing": {
+      "name": "製造",
+      "status": "未着手",
+      "progress": 0
+    },
+    "construction": {
+      "name": "施工",
+      "status": "未着手",
+      "progress": 0
+    }
+  }
+}
