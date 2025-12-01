@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロジェクト詳細 - Membry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .project-header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .project-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .project-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .phase-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .phase-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .phase-card-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+        }
+
+        .task-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .task-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s;
+        }
+
+        .task-item:hover {
+            background: #f9f9f9;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+        }
+
+        .task-checkbox.completed {
+            background: #4caf50;
+            border-color: #4caf50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .task-phase {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .phase-sales { background: #e3f2fd; color: #1976d2; }
+        .phase-design { background: #f3e5f5; color: #7b1fa2; }
+        .phase-manufacturing { background: #ffebee; color: #c62828; }
+        .phase-construction { background: #fff3e0; color: #e65100; }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .gantt-frame {
+            width: 100%;
+            height: 800px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/projects" class="back-link">
+                ← プロジェクト一覧に戻る
+            </a>
+            <div id="project-title-nav"></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="project-header">
+            <h1 class="project-title" id="project-title">読み込み中...</h1>
+            <div class="project-meta" id="project-meta"></div>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('overview')">📊 概要</button>
+                <button class="tab" onclick="switchTab('tasks')">📋 タスク</button>
+                <button class="tab" onclick="switchTab('gantt')">📅 ガントチャート</button>
+            </div>
+        </div>
+
+        <!-- 概要タブ -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-progress">0%</div>
+                    <div class="stat-label">全体進捗</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-completed">0</div>
+                    <div class="stat-label">完了タスク</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-inprogress">0</div>
+                    <div class="stat-label">進行中</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total">0</div>
+                    <div class="stat-label">総タスク数</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px; color: #333;">フェーズ別進捗</h3>
+            <div class="phase-cards" id="phase-cards"></div>
+        </div>
+
+        <!-- タスクタブ -->
+        <div id="tab-tasks" class="tab-content">
+            <div class="task-list" id="task-list">
+                <div class="loading">タスクを読み込み中...</div>
+            </div>
+        </div>
+
+        <!-- ガントチャートタブ -->
+        <div id="tab-gantt" class="tab-content">
+            <iframe id="gantt-frame" class="gantt-frame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        let currentProjectId = null;
+        let currentProject = null;
+        let currentStats = null;
+
+        // URLからプロジェクトIDを取得
+        function getProjectId() {
+            const path = window.location.pathname;
+            const match = path.match(/\/projects\/([^\/]+)/);
+            return match ? match[1] : null;
+        }
+
+        // タブ切り替え
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            if (tabName === 'gantt' && currentProjectId) {
+                loadGanttChart();
+            }
+        }
+
+        // プロジェクト詳細を読み込み
+        async function loadProjectDetails() {
+            currentProjectId = getProjectId();
+            if (!currentProjectId) {
+                alert('プロジェクトIDが見つかりません');
+                window.location.href = '/projects';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/projects/${currentProjectId}`);
+                if (!response.ok) {
+                    throw new Error('Project not found');
+                }
+
+                const data = await response.json();
+                currentProject = data.project;
+                currentStats = data.stats;
+
+                renderProjectHeader();
+                renderOverview();
+                renderTasks();
+            } catch (error) {
+                console.error('Error loading project:', error);
+                alert('プロジェクトの読み込みに失敗しました');
+                window.location.href = '/projects';
+            }
+        }
+
+        // プロジェクトヘッダーを描画
+        function renderProjectHeader() {
+            document.getElementById('project-title').textContent = currentProject.name;
+            document.getElementById('project-title-nav').textContent = currentProject.name;
+
+            const startDate = new Date(currentProject.startDate).toLocaleDateString('ja-JP');
+            const endDate = new Date(currentProject.targetEndDate).toLocaleDateString('ja-JP');
+
+            document.getElementById('project-meta').innerHTML = `
+                ${currentProject.description || ''}<br>
+                📅 ${startDate} 〜 ${endDate}
+            `;
+        }
+
+        // 概要タブを描画
+        function renderOverview() {
+            document.getElementById('stat-progress').textContent = `${currentStats.overallProgress}%`;
+            document.getElementById('stat-completed').textContent = currentStats.completedTasks;
+            document.getElementById('stat-inprogress').textContent = currentStats.inProgressTasks;
+            document.getElementById('stat-total').textContent = currentStats.totalTasks;
+
+            const phaseCards = document.getElementById('phase-cards');
+            phaseCards.innerHTML = '';
+
+            const phaseNames = {
+                sales: '💼 営業',
+                design: '📐 設計',
+                manufacturing: '🏭 製造',
+                construction: '🏗️ 施工'
+            };
+
+            Object.entries(currentStats.phaseProgress).forEach(([phase, progress]) => {
+                const card = document.createElement('div');
+                card.className = 'phase-card';
+                card.innerHTML = `
+                    <div class="phase-card-header">${phaseNames[phase] || phase}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="progress-text">${progress}% 完了</div>
+                `;
+                phaseCards.appendChild(card);
+            });
+        }
+
+        // タスク一覧を描画
+        function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+
+            const phaseClassMap = {
+                sales: 'phase-sales',
+                design: 'phase-design',
+                manufacturing: 'phase-manufacturing',
+                construction: 'phase-construction'
+            };
+
+            const phaseNameMap = {
+                sales: '営業',
+                design: '設計',
+                manufacturing: '製造',
+                construction: '施工'
+            };
+
+            currentProject.tasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+
+                const isCompleted = task.status === 'completed';
+                const checkboxClass = isCompleted ? 'task-checkbox completed' : 'task-checkbox';
+                const checkmark = isCompleted ? '✓' : '';
+
+                taskItem.innerHTML = `
+                    <div class="${checkboxClass}">${checkmark}</div>
+                    <div class="task-info">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-meta">
+                            ${task.assignee || '未割当'} •
+                            ${task.estimatedHours || 0}時間 •
+                            進捗: ${task.progress}%
+                        </div>
+                    </div>
+                    <span class="task-phase ${phaseClassMap[task.phase]}">${phaseNameMap[task.phase]}</span>
+                `;
+
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        // ガントチャートを読み込み
+        function loadGanttChart() {
+            const frame = document.getElementById('gantt-frame');
+            frame.src = `/api/projects/${currentProjectId}/gantt`;
+        }
+
+        // ページ読み込み時に実行
+        loadProjectDetails();
+    </script>
+</body>
+</html>

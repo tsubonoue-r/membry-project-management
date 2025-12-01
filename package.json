@@ -8,6 +8,8 @@
     "dev": "tsx watch src/index.ts",
     "demo": "tsx src/examples/demo-project.ts",
     "test:lark": "tsx src/examples/test-lark.ts",
+    "server": "tsx src/server.ts",
+    "dev:server": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
